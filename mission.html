@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feuille de Route & Missions Futures - NIRD</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'void': '#0B0C10',
+                        'surface': '#1F2833',
+                        'neon-blue': '#45A29E',
+                        'neon-glow': '#66FCF1',
+                        'silver': '#C5C6C7',
+                        'success': '#00b894'
+                    },
+                    fontFamily: {
+                        'display': ['Rajdhani', 'sans-serif'],
+                        'body': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* --- BASE STYLES (Même charte que l'accueil) --- */
+        body { background-color: #0B0C10; color: #C5C6C7; font-family: 'Inter', sans-serif; overflow-x: hidden; position: relative; }
+        
+        .premium-grid {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: linear-gradient(rgba(69, 162, 158, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(69, 162, 158, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        }
+
+        .ambient-orb {
+            position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.4; z-index: 0; pointer-events: none;
+        }
+        .orb-1 { top: 20%; left: -10%; width: 40vw; height: 40vw; background: rgba(69, 162, 158, 0.1); }
+        .orb-2 { bottom: 10%; right: -5%; width: 50vw; height: 50vw; background: rgba(31, 40, 51, 0.8); }
+
+        .glass-nav {
+            background: rgba(11, 12, 16, 0.7); backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* --- TIMELINE STYLES --- */
+        .timeline-line {
+            position: absolute; left: 50%; transform: translateX(-50%); top: 0; bottom: 0; width: 2px;
+            background: linear-gradient(to bottom, #45A29E, transparent);
+            box-shadow: 0 0 15px #45A29E;
+        }
+        
+        .timeline-card {
+            background: rgba(31, 40, 51, 0.5); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .timeline-card:hover {
+            border-color: #66FCF1; box-shadow: 0 0 30px rgba(69, 162, 158, 0.15); transform: scale(1.02);
+        }
+        
+        .timeline-dot {
+            width: 20px; height: 20px; background: #0B0C10; border: 2px solid #66FCF1; border-radius: 50%;
+            position: absolute; left: 50%; transform: translateX(-50%); top: 20px; z-index: 10;
+            box-shadow: 0 0 15px #66FCF1;
+        }
+
+        /* Responsive timeline adjustment */
+        @media (max-width: 768px) {
+            .timeline-line { left: 20px; }
+            .timeline-dot { left: 20px; }
+        }
+
+        /* --- TEXTE GRADIENT --- */
+        .text-gradient {
+            background: linear-gradient(to right, #45A29E, #66FCF1);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        /* À avoir dans le <style> de chaque page */
+.glass-nav {
+    background: rgba(11, 12, 16, 0.7); /* Fond noir transparent */
+    backdrop-filter: blur(20px) saturate(180%); /* Effet de flou */
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Bordure subtile */
+}
+       @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: #1F2833; border-radius: 3px; border: 1px solid #45A29E; }
+
+        .dash-header-overlay {
+            mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+        }
+        
+        .btn-action {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+        }
+        .btn-action:hover {
+            background: rgba(69, 162, 158, 0.2);
+            border-color: #66FCF1;
+            color: white;
+            box-shadow: 0 0 15px rgba(102, 252, 241, 0.3);
+        }
+        /* CURSEUR PERSONNALISÉ */
+body { cursor: none; } /* Cache le curseur par défaut */
+
+#custom-cursor {
+    position: fixed; top: 0; left: 0; width: 20px; height: 20px;
+    border: 2px solid #66FCF1; border-radius: 50%;
+    transform: translate(-50%, -50%); pointer-events: none; z-index: 9999;
+    transition: width 0.2s, height 0.2s, background-color 0.2s;
+    mix-blend-mode: difference; /* Effet inversé cool sur le texte */
+}
+#custom-cursor::after {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    width: 4px; height: 4px; background: #66FCF1; border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+/* État au survol d'un lien */
+body.hovering #custom-cursor {
+    width: 50px; height: 50px; background-color: rgba(102, 252, 241, 0.1); border-color: transparent;
+}
+/* EFFET GLITCH */
+.glitch { position: relative; display: inline-block; }
+.glitch::before, .glitch::after {
+    content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: #0B0C10; /* Couleur du fond pour masquer */
+}
+.glitch::before {
+    left: 2px; text-shadow: -1px 0 #ff00c1; clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim-1 5s infinite linear alternate-reverse;
+}
+.glitch::after {
+    left: -2px; text-shadow: -1px 0 #00fff9; clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim-2 5s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+    0% { clip: rect(30px, 9999px, 10px, 0); }
+    5% { clip: rect(70px, 9999px, 90px, 0); }
+    10% { clip: rect(40px, 9999px, 20px, 0); }
+    15% { clip: rect(10px, 9999px, 80px, 0); }
+    20%, 100% { clip: rect(0, 0, 0, 0); } /* Pause */
+}
+@keyframes glitch-anim-2 {
+    0% { clip: rect(10px, 9999px, 50px, 0); }
+    5% { clip: rect(80px, 9999px, 20px, 0); }
+    10% { clip: rect(20px, 9999px, 60px, 0); }
+    15% { clip: rect(60px, 9999px, 10px, 0); }
+    20%, 100% { clip: rect(0, 0, 0, 0); } /* Pause */
+}
+    .animate-widget { animation: slideInRight 0.5s ease-out 1s backwards; }
+        summary::-webkit-details-marker {
+  display: none;
+}
+    </style>
+</head>
+<body class="antialiased">
+    <div id="custom-cursor"></div>
+    <div class="premium-grid"></div>
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+<nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        
+        <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-8 h-8 rounded bg-gradient-to-br from-neon-blue to-neon-glow flex items-center justify-center shadow-[0_0_15px_rgba(102,252,241,0.5)] group-hover:scale-110 transition-transform duration-300">
+                <span class="text-void font-bold">N</span>
+            </div>
+            <span class="text-xl font-display font-bold tracking-widest text-white group-hover:text-neon-glow transition-colors">NIRD<span class="text-neon-blue">.OS</span></span>
+        </a>
+        
+        <div class="hidden md:flex items-center gap-8 font-display text-sm font-semibold tracking-wide text-silver">
+            <a href="vision_projet.html" class="hover:text-neon-glow transition-colors">VULNÉRABILITÉS</a>
+            <a href="mission.html" class="hover:text-neon-glow transition-colors">MISSIONS</a>
+            <a href="n2i_projet.html" class="px-5 py-2 rounded-full border border-white/10 hover:bg-white/5 hover:border-neon-glow transition-all">
+             SIMULATION
+            </a>
+        </div>
+
+        <details class="md:hidden relative">
+            <summary class="list-none cursor-pointer text-white hover:text-neon-blue transition-colors p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </summary>
+
+            <div class="absolute right-0 top-full mt-4 w-56 bg-[#0B0C10] border border-neon-blue rounded-lg shadow-[0_0_30px_rgba(102,252,241,0.2)] p-4 flex flex-col gap-4 z-50 backdrop-blur-xl">
+                <a href="vision_projet.html" class="text-silver hover:text-neon-glow font-display text-sm font-bold tracking-wide border-b border-white/10 pb-2">VULNÉRABILITÉS</a>
+                <a href="mission.html" class="text-silver hover:text-neon-glow font-display text-sm font-bold tracking-wide border-b border-white/10 pb-2">MISSIONS</a>
+                <a href="n2i_projet.html" class="text-neon-blue font-display text-sm font-bold tracking-wide bg-white/5 p-2 rounded text-center border border-neon-blue/30 hover:bg-neon-blue hover:text-black transition-all">
+                    SIMULATION
+                </a>
+            </div>
+        </details>
+
+    </div>
+</nav>
+
+    <header class="relative pt-40 pb-20 text-center container mx-auto px-6">
+        <span class="inline-block px-3 py-1 rounded-full border border-neon-blue/30 bg-neon-blue/5 text-neon-glow text-xs font-mono tracking-widest mb-6">
+            CLASSIFIÉ : STRATÉGIE 2025-2030
+        </span>
+        <h1 class="text-5xl md:text-7xl font-display font-bold text-white mb-6">
+            FEUILLE DE ROUTE <span class="text-gradient">NIRD</span>
+        </h1>
+        <p class="text-gray-400 text-lg max-w-2xl mx-auto leading-relaxed">
+            Notre mission ne s'arrête pas à la réparation de quelques PC. 
+            Nous visons une transformation systémique : faire croître la communauté pour bâtir un numérique éducatif autonome.
+        </p>
+    </header>
+
+    <main class="container mx-auto px-6 pb-32 relative">
+        
+        <div class="timeline-line hidden md:block"></div>
+
+        <div class="space-y-24 relative z-10">
+            
+            <div class="flex flex-col md:flex-row items-center justify-between w-full">
+                <div class="w-full md:w-5/12 order-2 md:order-1 text-right pr-0 md:pr-12">
+                    <div class="timeline-card p-8 rounded-2xl relative">
+                        <div class="absolute -right-3 top-6 w-6 h-6 bg-surface rotate-45 hidden md:block border-t border-r border-white/10"></div>
+                        <h3 class="text-2xl font-display font-bold text-white mb-2">Phase 1 : La Forge des Communs</h3>
+                        <span class="text-neon-blue font-mono text-sm block mb-4">STATUT : EN COURS (2025)</span>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-4">
+                            Mutualisation massive des ressources via la Forge. 
+                            Sensibilisation des équipes à la sobriété numérique et lutte contre l'obsolescence programmée via Linux.
+                        </p>
+                        <ul class="text-left text-xs space-y-2 text-silver font-mono bg-black/20 p-4 rounded border border-white/5">
+                            <li class="flex items-center gap-2"><span class="text-neon-glow">✔</span> OS Libre déployé sur parc test</li>
+                            <li class="flex items-center gap-2"><span class="text-neon-glow">✔</span> Ateliers Repair Café lancés</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="timeline-dot hidden md:block"></div>
+                
+                <div class="w-full md:w-5/12 order-1 md:order-2 pl-0 md:pl-12 mb-8 md:mb-0">
+                    <div class="text-left">
+                        <span class="text-8xl font-display font-bold text-white/5 absolute -top-10 -left-10 select-none">01</span>
+                        <h2 class="text-3xl font-bold text-white mb-2">Infiltration</h2>
+                        <p class="text-gray-500">Établissement des têtes de pont dans les lycées pilotes.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row items-center justify-between w-full">
+                <div class="w-full md:w-5/12 order-1 text-right pr-0 md:pr-12 mb-8 md:mb-0">
+                    <div class="text-right">
+                        <span class="text-8xl font-display font-bold text-white/5 absolute -top-10 -right-10 select-none">02</span>
+                        <h2 class="text-3xl font-bold text-white mb-2">Expansion</h2>
+                        <p class="text-gray-500">Le Village devient une Fédération.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-dot hidden md:block"></div>
+                
+                <div class="w-full md:w-5/12 order-2 pl-0 md:pl-12">
+                    <div class="timeline-card p-8 rounded-2xl relative">
+                        <div class="absolute -left-3 top-6 w-6 h-6 bg-surface rotate-45 hidden md:block border-b border-l border-white/10"></div>
+                        <h3 class="text-2xl font-display font-bold text-white mb-2">Phase 2 : Maillage Territorial</h3>
+                        <span class="text-purple-400 font-mono text-sm block mb-4">CIBLE : 2026-2027</span>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-4">
+                            Co-construction de solutions numériques locales avec les collectivités territoriales. 
+                            L'objectif est d'étendre le projet NIRD au maximum d'établissements scolaires.
+                        </p>
+                        <div class="flex gap-2 mt-4">
+                            <span class="px-2 py-1 bg-purple-500/10 border border-purple-500/30 rounded text-[10px] text-purple-300">COLLABORATION</span>
+                            <span class="px-2 py-1 bg-purple-500/10 border border-purple-500/30 rounded text-[10px] text-purple-300">TERRITOIRES</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex flex-col md:flex-row items-center justify-between w-full">
+                <div class="w-full md:w-5/12 order-2 md:order-1 text-right pr-0 md:pr-12">
+                    <div class="timeline-card p-8 rounded-2xl relative border-neon-glow/30 shadow-[0_0_20px_rgba(102,252,241,0.1)]">
+                        <div class="absolute -right-3 top-6 w-6 h-6 bg-surface rotate-45 hidden md:block border-t border-r border-white/10"></div>
+                        <h3 class="text-2xl font-display font-bold text-white mb-2">Phase 3 : Autonomie Totale</h3>
+                        <span class="text-success font-mono text-sm block mb-4">VISION : 2030</span>
+                        <p class="text-gray-400 text-sm leading-relaxed mb-4">
+                            Un écosystème éducatif 100% Inclusif, Responsable et Durable.
+                            Matériel reconditionné par défaut, serveurs souverains, indépendance totale vis-à-vis des Big Tech.
+                        </p>
+                        <div class="w-full bg-gray-700 h-1 rounded-full mt-4 overflow-hidden">
+                            <div class="bg-success h-full w-1/4 animate-pulse"></div>
+                        </div>
+                        <p class="text-[10px] text-right text-success mt-1">OBJECTIF FINAL</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-dot hidden md:block bg-neon-glow"></div>
+                
+                <div class="w-full md:w-5/12 order-1 md:order-2 pl-0 md:pl-12 mb-8 md:mb-0">
+                    <div class="text-left">
+                        <span class="text-8xl font-display font-bold text-white/5 absolute -top-10 -left-10 select-none">03</span>
+                        <h2 class="text-3xl font-bold text-white mb-2">Libération</h2>
+                        <p class="text-gray-500">L'école redevient un sanctuaire libre.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <section class="border-t border-white/5 bg-black/40 backdrop-blur-lg py-20 relative overflow-hidden">
+        <div class="absolute inset-0 bg-neon-blue/5"></div>
+        <div class="container mx-auto px-6 text-center relative z-10">
+            <h2 class="text-3xl font-display font-bold text-white mb-6">REJOIGNEZ LA COMMUNAUTÉ <span class="text-neon-glow">NIRD</span></h2>
+            <p class="text-gray-400 max-w-xl mx-auto mb-8">
+                Pour faire croître la communauté, nous avons besoin de développeurs, d'élèves, d'enseignants et de techniciens. 
+                Contribuez à la plateforme et animez le réseau.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="https://nird.forge.apps.education.fr/" target="_blank" class="px-8 py-3 bg-neon-blue hover:bg-neon-glow text-black font-bold rounded shadow-[0_0_20px_rgba(69,162,158,0.4)] transition-all transform hover:scale-105">
+                    ACCÉDER À LA FORGE
+                </a>
+                <a href="index.html" class="px-8 py-3 border border-white/20 hover:border-white text-white rounded transition-all">
+                    RETOUR ACCUEIL
+                </a>
+            </div>
+        </div>
+    </section>
+     <footer class="border-t border-white/5 bg-black/40 py-12 mt-12 backdrop-blur-lg relative z-20">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-600 text-sm uppercase tracking-widest">La Nuit de l'Info 2025 ISTY - Team NIRD</p>
+        </div>
+    </footer>
+<script>     const cursor = document.getElementById('custom-cursor');
+document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+});
+
+// Agrandir le curseur sur les liens et boutons
+document.querySelectorAll('a, button, .pro-card').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+});</script>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800, // Durée de l'animation
+    once: true,    // L'animation ne se joue qu'une fois
+    offset: 100    // Déclenchement un peu avant
+  });
+  
+    </script>
+</body>
+</html>

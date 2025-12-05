@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Opérationnel - NIRD | Premium Edition</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛡️</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'void': '#0B0C10',
+                        'surface': '#1F2833',
+                        'neon-blue': '#45A29E',
+                        'neon-glow': '#66FCF1',
+                        'silver': '#C5C6C7',
+                        'danger': '#ff4d4d',
+                        'success': '#00b894',
+                        'warning': '#facc15'
+                    },
+                    fontFamily: {
+                        'display': ['Rajdhani', 'sans-serif'],
+                        'body': ['Inter', 'sans-serif'],
+                        'mono': ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* --- FOND & AMBIANCE --- */
+        body { background-color: #0B0C10; color: #C5C6C7; font-family: 'Inter', sans-serif; overflow-x: hidden; position: relative; cursor: none; }
+
+        .ambient-orb {
+            position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.4;
+            z-index: 0; pointer-events: none;
+            animation: floatOrb 10s infinite alternate;
+        }
+        .orb-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #1F2833; }
+        .orb-2 { bottom: 20%; right: -5%; width: 40vw; height: 40vw; background: rgba(69, 162, 158, 0.15); animation-delay: -5s; }
+
+        @keyframes floatOrb {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 50px); }
+        }
+
+        .premium-grid {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: linear-gradient(rgba(69, 162, 158, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(69, 162, 158, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        }
+
+        /* --- NAVIGATION --- */
+        .glass-nav {
+            background: rgba(11, 12, 16, 0.7);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* --- UI DASHBOARD --- */
+        .pro-card {
+            background: rgba(31, 40, 51, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative; z-index: 10;
+        }
+        .pro-card:hover {
+            border-color: rgba(102, 252, 241, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), 0 0 15px rgba(69, 162, 158, 0.1);
+        }
+
+        .bar-container { background: rgba(0,0,0,0.6); border-radius: 999px; overflow: hidden; box-shadow: inset 0 2px 5px rgba(0,0,0,0.8); }
+        .bar-fill { height: 100%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); position: relative; }
+        .bar-fill::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transform: translateX(-100%); animation: shimmer 2.5s infinite;
+        }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: #1F2833; border-radius: 3px; border: 1px solid #45A29E; }
+
+        .btn-action {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+        }
+        .btn-action:hover {
+            background: rgba(69, 162, 158, 0.2);
+            border-color: #66FCF1;
+            color: white;
+            box-shadow: 0 0 15px rgba(102, 252, 241, 0.3);
+        }
+
+        /* CURSEUR PERSONNALISÉ */
+        #custom-cursor {
+            position: fixed; top: 0; left: 0; width: 20px; height: 20px;
+            border: 2px solid #66FCF1; border-radius: 50%;
+            transform: translate(-50%, -50%); pointer-events: none; z-index: 9999;
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+            mix-blend-mode: difference;
+        }
+        #custom-cursor::after {
+            content: ''; position: absolute; top: 50%; left: 50%;
+            width: 4px; height: 4px; background: #66FCF1; border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        body.hovering #custom-cursor {
+            width: 50px; height: 50px; background-color: rgba(102, 252, 241, 0.1); border-color: transparent;
+        }
+
+        /* Animation d'entrée du Widget */
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .animate-widget { animation: slideInRight 0.5s ease-out 1s backwards; }
+        summary::-webkit-details-marker {
+  display: none;
+}
+    </style>
+</head>
+<body class="antialiased selection:bg-neon-blue selection:text-white">
+
+    <div id="custom-cursor"></div>
+    <div class="ambient-orb orb-1"></div>
+    <div class="ambient-orb orb-2"></div>
+    <div class="premium-grid"></div>
+
+    <div id="intro-terminal" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md transition-opacity duration-500 hidden">
+        <div class="relative w-full max-w-2xl bg-[#0B0C10] border border-neon-blue rounded-lg shadow-[0_0_50px_rgba(69,162,158,0.2)] overflow-hidden m-4">
+            <div class="bg-surface border-b border-white/10 p-3 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span class="ml-3 text-xs font-mono text-gray-400">Une solution developée par les étudiants de l'ISTY:~# system_init</span>
+                </div>
+                <button onclick="closeTerminal()" class="text-xs text-gray-500 hover:text-white font-mono">[PASSER]</button>
+            </div>
+            <div class="p-6 h-64 md:h-52 overflow-hidden relative">
+                <div class="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 background-size-[100%_2px,3px_100%]"></div>
+                <div class="font-mono text-sm md:text-base leading-relaxed text-neon-blue">
+                    <span class="text-neon-glow mr-2">➜</span>
+                    <span id="typewriter-text"></span><span class="animate-pulse">_</span>
+                </div>
+            </div>
+            <div class="p-4 border-t border-white/10 bg-surface/50 flex justify-between items-center">
+                <button id="next-btn" onclick="nextLine()" class="px-6 py-2 bg-neon-blue hover:bg-neon-glow text-black font-bold font-mono text-xs rounded transition-all">SUIVANT >></button>
+                <button id="close-btn" onclick="closeTerminal()" class="hidden px-6 py-2 border border-neon-blue text-neon-blue hover:bg-neon-blue hover:text-black font-bold font-mono text-xs rounded transition-all">LANCER</button>
+            </div>
+        </div>
+    </div>
+    
+   <nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        
+        <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-8 h-8 rounded bg-gradient-to-br from-neon-blue to-neon-glow flex items-center justify-center shadow-[0_0_15px_rgba(102,252,241,0.5)] group-hover:scale-110 transition-transform duration-300">
+                <span class="text-void font-bold">N</span>
+            </div>
+            <span class="text-xl font-display font-bold tracking-widest text-white group-hover:text-neon-glow transition-colors">NIRD<span class="text-neon-blue">.OS</span></span>
+        </a>
+        
+        <div class="hidden md:flex items-center gap-8 font-display text-sm font-semibold tracking-wide text-silver">
+            <a href="vision_projet.html" class="hover:text-neon-glow transition-colors">VULNÉRABILITÉS</a>
+            <a href="mission.html" class="hover:text-neon-glow transition-colors">MISSIONS</a>
+            <a href="n2i_projet.html" class="px-5 py-2 rounded-full border border-white/10 hover:bg-white/5 hover:border-neon-glow transition-all">
+             SIMULATION
+            </a>
+        </div>
+
+        <details class="md:hidden relative">
+            <summary class="list-none cursor-pointer text-white hover:text-neon-blue transition-colors p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </summary>
+
+            <div class="absolute right-0 top-full mt-4 w-56 bg-[#0B0C10] border border-neon-blue rounded-lg shadow-[0_0_30px_rgba(102,252,241,0.2)] p-4 flex flex-col gap-4 z-50 backdrop-blur-xl">
+                <a href="vision_projet.html" class="text-silver hover:text-neon-glow font-display text-sm font-bold tracking-wide border-b border-white/10 pb-2">VULNÉRABILITÉS</a>
+                <a href="mission.html" class="text-silver hover:text-neon-glow font-display text-sm font-bold tracking-wide border-b border-white/10 pb-2">MISSIONS</a>
+                <a href="n2i_projet.html" class="text-neon-blue font-display text-sm font-bold tracking-wide bg-white/5 p-2 rounded text-center border border-neon-blue/30 hover:bg-neon-blue hover:text-black transition-all">
+                    SIMULATION
+                </a>
+            </div>
+        </details>
+
+    </div>
+</nav>
+    <div class="fixed top-24 right-6 z-40 bg-black/80 backdrop-blur-md border border-white/10 rounded-lg p-4 shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col items-end gap-1 animate-widget">
+        <div class="flex items-center gap-2 mb-1">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+            </span>
+            <span class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Niveau Menace GAFAM</span>
+        </div>
+        
+        <div class="flex items-center gap-3">
+            <div class="w-48 h-3 bg-gray-900 rounded-full overflow-hidden border border-white/10 relative">
+                <div class="absolute inset-0 bg-[linear-gradient(90deg,transparent_95%,rgba(0,0,0,0.8)_100%)] bg-[length:10px_100%] z-10 opacity-30"></div>
+                <div id="top-dep-bar" class="h-full transition-all duration-700 relative z-0" style="width: 95%"></div>
+            </div>
+            <span id="top-dep-text" class="text-lg font-mono font-bold text-danger">95%</span>
+        </div>
+    </div>
+
+    <header class="relative pt-32 pb-8 overflow-hidden">
+        <div class="absolute top-0 inset-x-0 h-[500px] z-[-1] dash-header-overlay opacity-40">
+             <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070" class="w-full h-full object-cover">
+        </div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/10 pb-6">
+                <div>
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="inline-block px-2 py-1 bg-neon-blue/10 border border-neon-blue/20 rounded text-[10px] font-mono text-neon-glow backdrop-blur-md">SESSION ID: 2025-NIRD-OPS</span>
+                        <button onclick="resetGame()" class="text-[10px] text-gray-500 hover:text-danger underline decoration-dotted cursor-pointer hover:bg-black/50 px-2 rounded">RÉINITIALISER</button>
+                    </div>
+                    <h1 class="text-4xl md:text-6xl font-display font-bold text-white tracking-wide drop-shadow-2xl">
+                        TABLEAU DE BORD <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-glow">OPS</span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8 relative z-20">
+        <div class="flex flex-col lg:flex-row gap-8">
+            
+            <div class="lg:w-2/3 flex flex-col gap-8">
+                <div class="pro-card p-1 rounded-2xl relative group">
+                    <div class="absolute inset-0 border border-neon-blue/30 rounded-2xl pointer-events-none z-20"></div>
+                    <div class="relative h-64 md:h-[400px] w-full rounded-xl overflow-hidden bg-black">
+                        <div id="carousel-track" class="flex h-full transition-transform duration-1000 ease-in-out will-change-transform"></div>
+                        <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-void via-void/90 to-transparent p-8 z-10 flex flex-col justify-end">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="w-2 h-2 bg-neon-glow rounded-full animate-pulse"></span>
+                                        <span id="slide-tag" class="text-[10px] font-mono text-neon-glow uppercase tracking-widest border border-neon-glow/30 px-2 rounded bg-black/50">PHASE 1/7</span>
+                                    </div>
+                                    <h2 id="slide-title" class="text-3xl md:text-4xl font-display font-bold text-white mb-2 drop-shadow-lg transition-all duration-500">Initialisation...</h2>
+                                    <p id="slide-desc" class="text-gray-300 font-light text-sm md:text-base max-w-lg border-l-2 border-neon-blue pl-4 transition-all duration-500">Chargement...</p>
+                                </div>
+                                <div class="hidden md:flex gap-2">
+                                    <button onclick="prevSlide()" class="p-2 rounded-full border border-white/20 hover:bg-white/10 text-white transition"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg></button>
+                                    <button onclick="nextSlide()" class="p-2 rounded-full border border-white/20 hover:bg-white/10 text-white transition"><svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="carousel-dots" class="absolute top-4 right-4 z-20 flex gap-1.5"></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="pro-card p-6 rounded-xl border-t-2 border-neon-blue group">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="text-[10px] font-bold text-gray-500 font-mono uppercase tracking-widest group-hover:text-neon-blue transition-colors">Inclusif</span>
+                        </div>
+                        <div class="flex items-baseline gap-1 mb-3">
+                            <span id="score-i" class="text-4xl font-display font-bold text-white">0</span>
+                            <span class="text-gray-600 text-xs font-mono">/300</span>
+                        </div>
+                        <div class="bar-container h-1.5"><div id="bar-i" class="bar-fill bg-neon-blue shadow-[0_0_10px_#45A29E]" style="width: 0%"></div></div>
+                    </div>
+
+                    <div class="pro-card p-6 rounded-xl border-t-2 border-purple-500 group">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="text-[10px] font-bold text-gray-500 font-mono uppercase tracking-widest group-hover:text-purple-400 transition-colors">Responsable</span>
+                        </div>
+                        <div class="flex items-baseline gap-1 mb-3">
+                            <span id="score-r" class="text-4xl font-display font-bold text-white">0</span>
+                            <span class="text-gray-600 text-xs font-mono">/300</span>
+                        </div>
+                        <div class="bar-container h-1.5"><div id="bar-r" class="bar-fill bg-purple-500 shadow-[0_0_10px_#a855f7]" style="width: 0%"></div></div>
+                    </div>
+
+                    <div class="pro-card p-6 rounded-xl border-t-2 border-yellow-500 group">
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="text-[10px] font-bold text-gray-500 font-mono uppercase tracking-widest group-hover:text-yellow-400 transition-colors">Durable</span>
+                        </div>
+                        <div class="flex items-baseline gap-1 mb-3">
+                            <span id="score-d" class="text-4xl font-display font-bold text-white">0</span>
+                            <span class="text-gray-600 text-xs font-mono">/300</span>
+                        </div>
+                        <div class="bar-container h-1.5"><div id="bar-d" class="bar-fill bg-yellow-500 shadow-[0_0_10px_#eab308]" style="width: 0%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:w-1/3">
+                <div class="pro-card p-6 rounded-2xl h-full sticky top-24 max-h-[calc(100vh-8rem)] flex flex-col">
+                    <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-4">
+                        <h3 class="text-lg font-display font-bold text-white flex items-center gap-2">
+                            <span class="relative flex h-3 w-3">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-neon-blue opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-3 w-3 bg-neon-blue"></span>
+                            </span>
+                            MISSIONS ACTIVES
+                        </h3>
+                    </div>
+                    <div id="missions-list" class="space-y-3 overflow-y-auto pr-2 flex-grow custom-scrollbar"></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="fixed bottom-6 right-6 z-50">
+        <button onclick="toggleHelp()" class="group relative flex items-center justify-center w-14 h-14 bg-neon-blue/10 border border-neon-blue rounded-full hover:bg-neon-blue hover:text-black text-neon-blue transition-all shadow-[0_0_20px_rgba(69,162,158,0.4)] animate-pulse hover:animate-none">
+            <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        </button>
+    </div>
+
+    <div id="help-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 transition-all duration-300 opacity-0">
+        <div class="pro-card max-w-2xl w-full bg-[#0B0C10] border border-neon-blue shadow-[0_0_50px_rgba(69,162,158,0.3)] transform scale-95 transition-transform duration-300" id="help-content">
+            <div class="flex justify-between items-center p-6 border-b border-white/10 bg-white/5">
+                <h2 class="text-2xl font-display font-bold text-white flex items-center gap-3">BRIEFING</h2>
+                <button onclick="toggleHelp()" class="text-gray-500 hover:text-white">X</button>
+            </div>
+            <div class="p-8 space-y-4 text-gray-300 text-sm">
+                <p>Objectif : Réduire la barre de menace GAFAM en validant les missions.</p>
+                <p>Chaque mission améliore vos scores NIRD (Inclusif, Responsable, Durable).</p>
+            </div>
+            <div class="p-6 border-t border-white/10 bg-black/40 flex justify-end">
+                <button onclick="toggleHelp()" class="px-6 py-2 bg-neon-blue hover:bg-neon-glow text-black font-bold rounded">COMPRIS</button>
+            </div>
+        </div>
+    </div>
+     <footer class="border-t border-white/5 bg-black/40 py-12 mt-12 backdrop-blur-lg relative z-20">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-600 text-sm uppercase tracking-widest">La Nuit de l'Info 2025 ISTY - Team NIRD</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- 1. CONFIGURATION DU JEU ---
+        const DB = {
+            state: { dep: 95, scores: { i: 20, r: 10, d: 15 }, done: [] },
+            missions: [
+                { id: "m1", type: "durable", title: "Opération PINGOUIN", desc: "Installer Linux sur 20 PC obsolètes.", gains: { dep: -20, d: 100 } },
+                { id: "m2", type: "responsable", title: "Protocole NEXTCLOUD", desc: "Déconnecter Google Drive. Migrer les données.", gains: { dep: -25, r: 100 } },
+                { id: "m3", type: "inclusif", title: "Formation LIBRE", desc: "Atelier LibreOffice pour le personnel.", gains: { dep: -15, i: 90 } },
+                { id: "m4", type: "durable", title: "Repair Café", desc: "Réparer au lieu de jeter.", gains: { dep: -5, d: 80 } },
+                { id: "m5", type: "responsable", title: "Bouclier Vie Privée", desc: "Déployer bloqueurs de pub sur le réseau.", gains: { dep: -10, r: 60 } },
+                { id: "m6", type: "inclusif", title: "Forge des Communs", desc: "Partager des ressources éducatives.", gains: { dep: -5, i: 70 } }
+            ]
+        };
+
+        const PHASES = [
+            { title: "PHASE 1 : COLONIE NUMÉRIQUE", desc: "Dépendance totale.", img: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000" },
+            { title: "PHASE 2 : L'ÉVEIL", desc: "Premiers ateliers Linux.", img: "https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?q=80&w=1000" },
+           { 
+                title: "PHASE 3 : LE CHANTIER DU LIBRE", 
+                desc: "Installation de serveurs locaux. Nextcloud remplace Drive. La communauté grandit.", 
+
+                img: "https://images.unsplash.com/photo-1597852074816-d933c7d2b988?q=80&w=1000" 
+            },
+            { 
+                title: "PHASE 4 : MAILLAGE RÉSEAU", 
+                desc: "Connexion sécurisée entre les classes. Le réseau devient résilient.", 
+                img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000" 
+            },{ title: "PHASE 5 : LA FORGE", desc: "Création de ressources.", img: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=1000" },
+            { title: "PHASE 6 : ÉCOSYSTÈME", desc: "Sobriété énergétique.", img: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000" },
+            { title: "PHASE 7 : SANCTUAIRE NIRD", desc: "Autonomie totale.", img: "https://images.unsplash.com/photo-1496449903678-68ddcb189a24?q=80&w=1000" }
+        ];
+
+        // --- 2. LOGIQUE DU JEU (RENDER) ---
+        const savedState = localStorage.getItem('nird_save');
+        const state = savedState ? JSON.parse(savedState) : { ...DB.state };
+
+        function render() {
+            // A. Widget Menace
+            const depEl = document.getElementById('top-dep-bar');
+            const depText = document.getElementById('top-dep-text');
+            if(depEl && depText) {
+                depEl.style.width = state.dep + '%';
+                depText.innerText = state.dep + '%';
+                let color = state.dep < 40 ? 'bg-success' : (state.dep < 70 ? 'bg-warning' : 'bg-danger');
+                depEl.className = `h-full ${color} shadow-[0_0_10px] transition-all duration-500`;
+                depText.className = `text-lg font-mono font-bold ${state.dep < 40 ? 'text-success' : (state.dep < 70 ? 'text-warning' : 'text-danger')}`;
+            }
+
+            // B. Scores
+            const updateScore = (id, val) => {
+                const elVal = document.getElementById(`score-${id}`);
+                const elBar = document.getElementById(`bar-${id}`);
+                if(elVal && elBar) {
+                    elVal.innerText = val;
+                    elBar.style.width = Math.min(100, (val / 300 * 100)) + '%';
+                }
+            };
+            updateScore('i', state.scores.i);
+            updateScore('r', state.scores.r);
+            updateScore('d', state.scores.d);
+
+            // C. Missions (LE POINT CRITIQUE CORRIGÉ)
+            const list = document.getElementById('missions-list');
+            if(list) {
+                list.innerHTML = ''; // Nettoyer
+                const activeMissions = DB.missions.filter(m => !state.done.includes(m.id));
+                
+                if (activeMissions.length === 0) {
+                    list.innerHTML = `<div class="p-4 rounded border border-success/30 bg-success/10 text-success text-center">OBJECTIFS ATTEINTS</div>`;
+                } else {
+                    activeMissions.forEach(m => {
+                        let accent = m.type === 'inclusif' ? 'border-neon-blue' : (m.type === 'responsable' ? 'border-purple-500' : 'border-yellow-500');
+                        const item = document.createElement('div');
+                        item.className = `btn-action p-4 rounded-lg bg-black/20 border-l-2 ${accent} hover:bg-white/5 transition-all group cursor-pointer`;
+                        item.innerHTML = `
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-bold text-gray-200 text-sm group-hover:text-white font-display tracking-wide">${m.title}</h4>
+                                <span class="text-[9px] font-mono uppercase bg-black/40 px-1.5 py-0.5 rounded text-gray-400">${m.type.substr(0,3)}</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mb-4 font-light">${m.desc}</p>
+                            <button onclick="complete('${m.id}')" class="w-full py-2 rounded bg-white/5 hover:bg-neon-blue hover:text-black border border-white/10 text-[10px] font-bold font-mono uppercase tracking-widest transition-all">EXÉCUTER</button>
+                        `;
+                        list.appendChild(item);
+                    });
+                }
+            }
+        }
+
+        window.complete = function(id) {
+            const m = DB.missions.find(x => x.id === id);
+            if(!m) return;
+            state.done.push(id);
+            state.dep = Math.max(0, state.dep + m.gains.dep);
+            if(m.gains.i) state.scores.i += m.gains.i;
+            if(m.gains.r) state.scores.r += m.gains.r;
+            if(m.gains.d) state.scores.d += m.gains.d;
+            localStorage.setItem('nird_save', JSON.stringify(state));
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#45A29E', '#66FCF1'] });
+            render();
+        }
+
+        window.resetGame = function() {
+            localStorage.removeItem('nird_save');
+            location.reload();
+        }
+
+        // --- 3. CARROUSEL ---
+        let currentSlide = 0;
+        function initCarousel() {
+            const track = document.getElementById('carousel-track');
+            const dots = document.getElementById('carousel-dots');
+            if(track && dots) {
+                PHASES.forEach((phase, index) => {
+                    const d = document.createElement('div');
+                    d.className = "w-full h-full flex-shrink-0 bg-cover bg-center";
+                    d.style.backgroundImage = `url('${phase.img}')`;
+                    track.appendChild(d);
+                    
+                    const dot = document.createElement('div');
+                    dot.className = index === 0 ? "w-6 h-2 rounded-full bg-neon-glow" : "w-2 h-2 rounded-full bg-white/30";
+                    dots.appendChild(dot);
+                });
+                updateSlideText();
+                setInterval(() => {
+                    currentSlide = (currentSlide + 1) % PHASES.length;
+                    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+                    updateSlideText();
+                    Array.from(dots.children).forEach((dot, i) => dot.className = i === currentSlide ? "w-6 h-2 rounded-full bg-neon-glow transition-all" : "w-2 h-2 rounded-full bg-white/30 transition-all");
+                }, 5000);
+            }
+        }
+        function updateSlideText() {
+            const t = document.getElementById('slide-title');
+            const d = document.getElementById('slide-desc');
+            const tag = document.getElementById('slide-tag');
+            if(t && d && tag) {
+                t.innerText = PHASES[currentSlide].title;
+                d.innerText = PHASES[currentSlide].desc;
+                tag.innerText = `PHASE ${currentSlide + 1}/7`;
+            }
+        }
+
+        // --- 4. TERMINAL & CURSEUR ---
+        const messages = ["Init Dashboard...", "Secure Connexion...", "Analysing Threats...", "Ready."];
+        let curLine = 0, charIdx = 0;
+        function typeWriter() {
+            const txt = document.getElementById('typewriter-text');
+            if (curLine < messages.length && txt) {
+                if (charIdx < messages[curLine].length) {
+                    txt.innerHTML += messages[curLine].charAt(charIdx++);
+                    setTimeout(typeWriter, 30);
+                } else {
+                    txt.innerHTML += "<br/>"; curLine++; charIdx = 0;
+                    if(curLine === messages.length) {
+                        document.getElementById('next-btn').classList.add('hidden');
+                        document.getElementById('close-btn').classList.remove('hidden');
+                    } else { setTimeout(typeWriter, 100); }
+                }
+            }
+        }
+        function nextLine() { curLine++; charIdx = 0; typeWriter(); }
+        function closeTerminal() {
+            const t = document.getElementById('intro-terminal');
+            t.classList.add('opacity-0');
+            setTimeout(()=> t.classList.add('hidden'), 500);
+            sessionStorage.setItem('nird_dashboard_seen', 'true');
+        }
+        
+        function toggleHelp() {
+            const m = document.getElementById('help-modal');
+            const c = document.getElementById('help-content');
+            if(m.classList.contains('hidden')) {
+                m.classList.remove('hidden');
+                setTimeout(() => { m.classList.remove('opacity-0'); c.classList.add('scale-100'); }, 10);
+            } else {
+                m.classList.add('opacity-0'); c.classList.remove('scale-100');
+                setTimeout(() => m.classList.add('hidden'), 300);
+            }
+        }
+
+        // --- 5. INITIALISATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            AOS.init();
+            render();
+            initCarousel();
+            
+            // Terminal
+            if (!sessionStorage.getItem('nird_dashboard_seen')) {
+                const term = document.getElementById('intro-terminal');
+                if(term) {
+                    term.classList.remove('hidden');
+                    setTimeout(typeWriter, 500);
+                }
+            }
+
+            // Custom Cursor
+            const cursor = document.getElementById('custom-cursor');
+            document.addEventListener('mousemove', (e) => {
+                if(cursor) { cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px'; }
+            });
+            document.querySelectorAll('a, button, .pro-card').forEach(el => {
+                el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+                el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+            });
+        });
+    </script>
+</body>
+</html>

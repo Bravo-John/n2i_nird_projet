@@ -1,0 +1,119 @@
+{
+  "etat_initial": {
+    "dependance_max": 100,
+    "dependance_actuelle": 80,
+    "score_inclusif": 25,
+    "score_responsable": 40,
+    "score_durable": 15
+  },
+  
+ 
+  
+  "phases_village": [
+    {
+      "id": 1,
+      "seuil_min": 0,
+      "titre": "Phase 1 : Le Hameau Fragile",
+      "description": "Faible autonomie. Le travail commence à peine.",
+      "image_url": "images/village_phase1.png"
+    },
+    {
+      "id": 2,
+      "seuil_min": 100,
+      "titre": "Phase 2 : La Forge se Réveille",
+      "description": "Les premiers équipements libres sont installés et les formations commencent.",
+      "image_url": "images/village_phase2.png"
+    },
+    {
+      "id": 3,
+      "seuil_min": 250,
+      "titre": "Phase 3 : Le Mur d'Autonomie",
+      "description": "L'établissement est bien engagé. La dépendance diminue fortement.",
+      "image_url": "images/village_phase3.png"
+    },
+    {
+      "id": 4,
+      "seuil_min": 450,
+      "titre": "Phase 4 : La Cité Libre",
+      "description": "L'établissement est un pôle d'autonomie et de partage pour la communauté.",
+      "image_url": "images/village_phase4.png"
+    },
+    {
+      "id": 5,
+      "seuil_min": 700,
+      "titre": "Phase 5 : Sanctuaire Numérique Résistant (Max)",
+      "description": "Dépendance minimale. L'établissement est un modèle NIRD national !",
+      "image_url": "images/village_phase5.png"
+    }
+  ],
+  
+  "defis": [
+    {
+      "id": "DUR_001",
+      "pilier": "durable",
+      "titre": "Lancer la Migration Linux",
+      "description": "Installer une distribution Linux sur 10% du parc informatique pour contrer l'obsolescence.",
+      "niveau": "Intermédiaire",
+      "impact": {
+        "dependance": -20,
+        "durable": 30
+      }
+    },
+    {
+      "id": "RES_001",
+      "pilier": "responsable",
+      "titre": "Auditer le Stockage Cloud",
+      "description": "Identifier et migrer les données stockées hors de l'Union Européenne (RGPD).",
+      "niveau": "Starter",
+      "impact": {
+        "dependance": -15,
+        "responsable": 25
+      }
+    },
+
+    {
+      "id": "INC_001",
+      "pilier": "inclusif",
+      "titre": "Former l'équipe à la Sobriété Numérique",
+      "description": "Organiser une session de formation pour les enseignants sur les bonnes pratiques et la sobriété.",
+      "niveau": "Starter",
+      "impact": {
+        "dependance": -5,
+        "inclusif": 25
+      }
+    },
+    {
+      "id": "DUR_002",
+      "pilier": "durable",
+      "titre": "Organiser une Journée de Reconditionnement",
+      "description": "Impliquer les élèves dans la réparation et l'optimisation des anciens équipements (Low-Tech).",
+      "niveau": "Expert",
+      "impact": {
+        "dependance": -10,
+        "durable": 45
+      }
+    },
+    {
+      "id": "RES_002",
+      "pilier": "responsable",
+      "titre": "Adoption Bureautique Libre",
+      "description": "Remplacer l'abonnement bureautique par une suite logicielle libre (ex: LibreOffice) pour les postes administratifs.",
+      "niveau": "Intermédiaire",
+      "impact": {
+        "dependance": -25,
+        "responsable": 35
+      }
+    },
+    {
+      "id": "INC_002",
+      "pilier": "inclusif",
+      "titre": "Création d'un Tiers-Lieu Numérique",
+      "description": "Mettre en place un espace dédié à l'expérimentation du numérique libre et accessible à tous.",
+      "niveau": "Expert",
+      "impact": {
+        "dependance": -10,
+        "inclusif": 40
+      }
+    }
+  ]
+}

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preuves & Données - NIRD | L'Emprise Dévoilée</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'void': '#0B0C10',
+                        'surface': '#1F2833',
+                        'neon-blue': '#45A29E',
+                        'neon-glow': '#66FCF1',
+                        'danger': '#ff4d4d',
+                        'warning': '#facc15'
+                    },
+                    fontFamily: {
+                        'display': ['Rajdhani', 'sans-serif'],
+                        'body': ['Inter', 'sans-serif'],
+                        'mono': ['"JetBrains Mono"', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0B0C10; color: #C5C6C7; font-family: 'Inter', sans-serif; overflow-x: hidden; position: relative; }
+        
+        /* GRILLE DE FOND ANIMÉE */
+        .premium-grid {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background-image: linear-gradient(rgba(255, 77, 77, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 77, 77, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+            animation: pulseGrid 10s infinite alternate;
+        }
+        @keyframes pulseGrid { 0% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        .glass-panel {
+            background: rgba(31, 40, 51, 0.4); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        /* --- GRAPHIQUES CSS/SVG --- */
+        .chart-container { position: relative; width: 100%; height: 250px; border-left: 1px solid #333; border-bottom: 1px solid #333; padding: 10px; }
+        
+        /* Lignes de la grille graphique */
+        .chart-grid-line { position: absolute; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.05); }
+        
+        /* Barres animées */
+        .chart-bar {
+            width: 40px; bottom: 0; position: absolute;
+            background: linear-gradient(to top, rgba(69, 162, 158, 0.2), rgba(102, 252, 241, 0.8));
+            border-top: 2px solid #66FCF1;
+            transition: height 1s ease-out;
+        }
+        .chart-bar:hover { filter: brightness(1.2); box-shadow: 0 0 15px rgba(102, 252, 241, 0.3); }
+
+        /* Point sur la courbe */
+        .chart-dot {
+            width: 8px; height: 8px; background: #ff4d4d; border-radius: 50%;
+            position: absolute; transform: translate(-50%, 50%);
+            box-shadow: 0 0 10px #ff4d4d; z-index: 10;
+            transition: all 0.3s;
+        }
+        .chart-dot:hover { transform: translate(-50%, 50%) scale(2); cursor: pointer; }
+        
+        /* Tooltip graphique */
+        .chart-tooltip {
+            position: absolute; background: rgba(0,0,0,0.9); border: 1px solid #555;
+            padding: 5px 10px; border-radius: 4px; font-size: 0.7rem; font-family: 'JetBrains Mono';
+            color: white; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 20;
+            white-space: nowrap; transform: translateY(-40px);
+        }
+        .chart-dot:hover + .chart-tooltip, .chart-bar:hover + .chart-tooltip { opacity: 1; }
+
+        /* SVG Line Animation */
+        .svg-line {
+            fill: none; stroke: #ff4d4d; stroke-width: 3;
+            stroke-dasharray: 1000; stroke-dashoffset: 1000;
+            animation: drawLine 2s forwards ease-in-out 0.5s;
+            filter: drop-shadow(0 0 5px rgba(255, 77, 77, 0.5));
+        }
+        .svg-area {
+            fill: url(#gradientRed); opacity: 0;
+            animation: fadeInArea 2s forwards ease-in-out 1.5s;
+        }
+        @keyframes drawLine { to { stroke-dashoffset: 0; } }
+        @keyframes fadeInArea { to { opacity: 0.2; } }
+
+        /* Source Tag */
+        .source-tag {
+            font-size: 0.65rem; color: #666; text-transform: uppercase; letter-spacing: 1px;
+            border-bottom: 1px dotted #666; cursor: help; display: inline-block; margin-top: 4px;
+        }
+        .source-tag:hover { color: #45A29E; border-color: #45A29E; }
+        
+        .pie-chart {
+            width: 120px; height: 120px; border-radius: 50%; position: relative;
+            background: conic-gradient(#ff4d4d 0% 87.65%, #45A29E 87.65% 93.3%, #333 93.3% 100%);
+            box-shadow: 0 0 20px rgba(255, 77, 77, 0.2);
+        }
+        .pie-chart::after { content: ""; position: absolute; inset: 10px; background: #0B0C10; border-radius: 50%; }
+        /* À avoir dans le <style> de chaque page */
+.glass-nav {
+    background: rgba(11, 12, 16, 0.7); /* Fond noir transparent */
+    backdrop-filter: blur(20px) saturate(180%); /* Effet de flou */
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Bordure subtile */
+}
+       @keyframes shimmer { 100% { transform: translateX(100%); } }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: #1F2833; border-radius: 3px; border: 1px solid #45A29E; }
+
+        .dash-header-overlay {
+            mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+        }
+        
+        .btn-action {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.2s;
+        }
+        .btn-action:hover {
+            background: rgba(69, 162, 158, 0.2);
+            border-color: #66FCF1;
+            color: white;
+            box-shadow: 0 0 15px rgba(102, 252, 241, 0.3);
+        }
+        /* CURSEUR PERSONNALISÉ */
+body { cursor: none; } /* Cache le curseur par défaut */
+
+#custom-cursor {
+    position: fixed; top: 0; left: 0; width: 20px; height: 20px;
+    border: 2px solid #66FCF1; border-radius: 50%;
+    transform: translate(-50%, -50%); pointer-events: none; z-index: 9999;
+    transition: width 0.2s, height 0.2s, background-color 0.2s;
+    mix-blend-mode: difference; /* Effet inversé cool sur le texte */
+}
+#custom-cursor::after {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    width: 4px; height: 4px; background: #66FCF1; border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+/* État au survol d'un lien */
+body.hovering #custom-cursor {
+    width: 50px; height: 50px; background-color: rgba(102, 252, 241, 0.1); border-color: transparent;
+}
+/* EFFET GLITCH */
+.glitch { position: relative; display: inline-block; }
+.glitch::before, .glitch::after {
+    content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: #0B0C10; /* Couleur du fond pour masquer */
+}
+.glitch::before {
+    left: 2px; text-shadow: -1px 0 #ff00c1; clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim-1 5s infinite linear alternate-reverse;
+}
+.glitch::after {
+    left: -2px; text-shadow: -1px 0 #00fff9; clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim-2 5s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+    0% { clip: rect(30px, 9999px, 10px, 0); }
+    5% { clip: rect(70px, 9999px, 90px, 0); }
+    10% { clip: rect(40px, 9999px, 20px, 0); }
+    15% { clip: rect(10px, 9999px, 80px, 0); }
+    20%, 100% { clip: rect(0, 0, 0, 0); } /* Pause */
+}
+@keyframes glitch-anim-2 {
+    0% { clip: rect(10px, 9999px, 50px, 0); }
+    5% { clip: rect(80px, 9999px, 20px, 0); }
+    10% { clip: rect(20px, 9999px, 60px, 0); }
+    15% { clip: rect(60px, 9999px, 10px, 0); }
+    20%, 100% { clip: rect(0, 0, 0, 0); } /* Pause */
+}
+ .animate-widget { animation: slideInRight 0.5s ease-out 1s backwards; }
+    summary::-webkit-details-marker {
+  display: none;
+}
+    </style>
+</head>
+<body class="antialiased">
+    <div id="custom-cursor"></div>
+    <div class="premium-grid"></div>
+    <nav class="fixed top-0 w-full z-50 glass-nav transition-all duration-300">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        
+        <a href="index.html" class="flex items-center gap-3 group">
+            <div class="w-8 h-8 rounded bg-gradient-to-br from-neon-blue to-neon-glow flex items-center justify-center shadow-[0_0_15px_rgba(102,252,241,0.5)] group-hover:scale-110 transition-transform duration-300">
+                <span class="text-void font-bold">N</span>
+            </div>
+            <span class="text-xl font-display font-bold tracking-widest text-white group-hover:text-neon-glow transition-colors">NIRD<span class="text-neon-blue">.OS</span></span>
+        </a>
+        
+        <div class="hidden md:flex items-center gap-8 font-display text-sm font-semibold tracking-wide text-silver">
+            <a href="vision_projet.html" class="hover:text-neon-glow transition-colors">VULNÉRABILITÉS</a>
+            <a href="mission.html" class="hover:text-neon-glow transition-colors">MISSIONS</a>
+            <a href="n2i_projet.html" class="px-5 py-2 rounded-full border border-white/10 hover:bg-white/5 hover:border-neon-glow transition-all">
+             SIMULATION
+            </a>
+        </div>
+
+        <details class="md:hidden relative">
+            <summary class="list-none cursor-pointer text-white hover:text-neon-blue transition-colors p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+            </summary>
+
+            <div class="absolute right-0 top-full mt-4 w-56 bg-[#0B0C10] border border-neon-blue rounded-lg shadow-[0_0_30px_rgba(102,252,241,0.2)] p-4 flex flex-col gap-4 z-50 backdrop-blur-xl">
+                <a href="vision_projet.html" class="text-silver hover:text-neon-glow font-display text-sm font-bold tracking-wide border-b border-white/10 pb-2">VULNÉRABILITÉS</a>
+                <a href="mission.html" class="text-silver hover:text-neon-glow font-display text-sm font-bold tracking-wide border-b border-white/10 pb-2">MISSIONS</a>
+                <a href="n2i_projet.html" class="text-neon-blue font-display text-sm font-bold tracking-wide bg-white/5 p-2 rounded text-center border border-neon-blue/30 hover:bg-neon-blue hover:text-black transition-all">
+                    SIMULATION
+                </a>
+            </div>
+        </details>
+
+    </div>
+</nav>
+
+    <main class="container mx-auto px-6 pt-32 pb-20">
+        
+        <header class="text-center mb-20">
+            <div class="inline-block px-3 py-1 mb-4 rounded border border-danger/30 bg-danger/5 text-danger text-[10px] font-mono tracking-widest">RAPPORT CONFIDENTIEL</div>
+            <h1 class="text-4xl md:text-7xl font-display font-bold text-white mb-6">
+                L'ACCÉLÉRATION <span class="text-transparent bg-clip-text bg-gradient-to-r from-danger to-orange-500">FATALE</span>
+            </h1>
+            <p class="text-gray-400 max-w-2xl mx-auto text-lg leading-relaxed">
+                Ce ne sont pas des opinions. Ce sont des faits statistiques.
+                Regardez comment l'étau s'est resserré sur vos données entre 2015 et 2025.
+            </p>
+        </header>
+
+        <section class="mb-24">
+            <h2 class="text-3xl font-display font-bold text-white mb-10 pl-4 border-l-4 border-danger">1. L'EXPLOSION DES DONNÉES (2015-2025)</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                
+                <div class="glass-panel p-6 rounded-2xl relative">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white">Capture de la Datasphere</h3>
+                            <p class="text-xs text-gray-400 font-mono">Volume annuel de données créées/captées (en Zettabytes)</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-3xl font-bold text-danger">x12</span>
+                            <p class="text-[10px] text-gray-500 uppercase">Multiplicateur 10 ans</p>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <div class="chart-grid-line" style="bottom: 25%"></div>
+                        <div class="chart-grid-line" style="bottom: 50%"></div>
+                        <div class="chart-grid-line" style="bottom: 75%"></div>
+
+                        <svg class="absolute inset-0 w-full h-full p-[10px]" viewBox="0 0 500 230" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="gradientRed" x1="0" x2="0" y1="0" y2="1">
+                                    <stop offset="0%" stop-color="#ff4d4d" />
+                                    <stop offset="100%" stop-color="transparent" />
+                                </linearGradient>
+                            </defs>
+                            <path class="svg-area" d="M0,220 C100,210 200,190 250,150 S400,80 500,20 L500,230 L0,230 Z" />
+                            <path class="svg-line" d="M0,220 C100,210 200,190 250,150 S400,80 500,20" />
+                        </svg>
+
+                        <div class="chart-dot" style="left: 0%; bottom: 8%;"></div>
+                        <div class="chart-tooltip" style="left: 0%; bottom: 8%;">2015: 15 ZB</div>
+
+                        <div class="chart-dot" style="left: 20%; bottom: 18%;"></div>
+                        <div class="chart-tooltip" style="left: 20%; bottom: 18%;">2018: 33 ZB</div>
+
+                        <div class="chart-dot" style="left: 50%; bottom: 41%;"></div>
+                        <div class="chart-tooltip" style="left: 50%; bottom: 41%;">2021: 79 ZB (Covid Surge)</div>
+
+                        <div class="chart-dot" style="left: 75%; bottom: 66%;"></div>
+                        <div class="chart-tooltip" style="left: 75%; bottom: 66%;">2023: 120 ZB</div>
+
+                        <div class="chart-dot" style="left: 100%; bottom: 95%; background: white; box-shadow: 0 0 20px white;"></div>
+                        <div class="chart-tooltip" style="left: 85%; bottom: 95%;">2025: 181 ZB [Prévision IDC]</div>
+                    </div>
+
+                    <div class="flex justify-between mt-2 text-xs font-mono text-gray-500">
+                        <span>2015</span><span>2017</span><span>2019</span><span>2021</span><span>2023</span><span>2025</span>
+                    </div>
+                    <div class="mt-4 text-right">
+                        <span class="source-tag" title="Source : IDC Global DataSphere Forecast 2021-2025">[SOURCE : IDC DATASPHERE]</span>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-6 rounded-2xl relative">
+                    <div class="flex justify-between items-end mb-6">
+                        <div>
+                            <h3 class="text-xl font-bold text-white">La Conquête du Cloud</h3>
+                            <p class="text-xs text-gray-400 font-mono">Part de marché des logiciels éducatifs basés sur le Cloud</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-3xl font-bold text-neon-blue">78%</span>
+                            <p class="text-[10px] text-gray-500 uppercase">Verrouillés en 2024</p>
+                        </div>
+                    </div>
+
+                    <div class="chart-container border-l border-b border-gray-700">
+                         <div class="chart-grid-line" style="bottom: 25%"></div>
+                         <div class="chart-grid-line" style="bottom: 50%"></div>
+                         <div class="chart-grid-line" style="bottom: 75%"></div>
+
+                         <div class="chart-bar" style="left: 10%; height: 40%;"></div>
+                         <div class="chart-tooltip" style="left: 10%; bottom: 40%;">2019: 40%</div>
+
+                         <div class="chart-bar" style="left: 35%; height: 60%;"></div>
+                         <div class="chart-tooltip" style="left: 35%; bottom: 60%;">2021: 60%</div>
+
+                         <div class="chart-bar" style="left: 60%; height: 72%;"></div>
+                         <div class="chart-tooltip" style="left: 60%; bottom: 72%;">2023: 72%</div>
+
+                         <div class="chart-bar" style="left: 85%; height: 85%; background: linear-gradient(to top, #ff4d4d, #facc15); border-color: #facc15;"></div>
+                         <div class="chart-tooltip" style="left: 85%; bottom: 85%;">2025: >80% (Proj.)</div>
+                    </div>
+
+                    <div class="flex justify-around mt-2 text-xs font-mono text-gray-500">
+                        <span>2019</span><span>2021</span><span>2023</span><span>2025</span>
+                    </div>
+                    
+                    <p class="mt-4 text-sm text-gray-400">
+                        <span class="text-neon-blue font-bold">Conséquence :</span> Les écoles ne possèdent plus leurs logiciels. Elles les louent. Si elles arrêtent de payer, elles perdent tout.
+                    </p>
+                    <div class="mt-2 text-right">
+                        <span class="source-tag" title="Source : Mordor Intelligence - Education Software Market Share 2024">[SOURCE : MORDOR INTELLIGENCE]</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-24 items-center">
+            <div class="glass-panel p-8 rounded-2xl border-l-4 border-danger relative overflow-hidden">
+                <h2 class="text-2xl font-bold text-white mb-2">Le Monopole de la Recherche (2025)</h2>
+                <p class="text-gray-400 text-sm mb-6">Janvier 2025 - France. Une domination quasi-totale.</p>
+                
+                <div class="flex items-center gap-8 justify-center md:justify-start">
+                    <div class="pie-chart">
+                        <div class="absolute inset-0 flex items-center justify-center flex-col z-10">
+                            <span class="block text-3xl font-bold text-white">87%</span>
+                            <span class="text-[10px] text-danger font-mono">GOOGLE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2 text-sm font-mono">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-danger"></span>
+                            <span class="text-white">87.6% Google</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-[#45A29E]"></span>
+                            <span class="text-gray-400">5.6% Bing</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-gray-600"></span>
+                            <span class="text-gray-500">6.8% Autres</span>
+                        </div>
+                        <span class="source-tag" title="Source : StatCounter Global Stats (Jan 2025)">[SOURCE : STATCOUNTER 2025]</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-left md:pl-10">
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <span class="text-danger">⚠</span> Pourquoi est-ce dangereux ?
+                </h3>
+                <p class="text-gray-400 leading-relaxed mb-4">
+                    Quand une seule entité contrôle près de 90% des recherches, elle décide de ce qui est "visible".
+                    En 2024, le nombre de traqueurs sur les sites a augmenté de <strong class="text-white">50%</strong> par rapport à 2015.
+                </p>
+                <div class="p-4 bg-danger/10 border border-danger/20 rounded text-sm text-danger font-mono">
+                    IMPACT : Vos élèves ne voient pas le web. Ils voient le web filtré par Google.
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-24">
+            <div class="glass-panel p-8 rounded-2xl border-t-4 border-white/20">
+                <h2 class="text-2xl font-bold text-white mb-4">L'Affaire Télémétrie Windows</h2>
+                <div class="flex flex-col md:flex-row gap-8">
+                    <div class="md:w-1/2 text-sm text-gray-400 leading-relaxed">
+                        <p class="mb-4">
+                            Windows 10 et 11 collectent par défaut des "données de diagnostic". Bien que Microsoft affirme que ce n'est pas de l'espionnage, le volume est massif et l'envoi vers les USA est systématique.
+                        </p>
+                        <p class="text-silver italic border-l-2 border-silver pl-3">
+                            "L'invalidation du Privacy Shield par la cour européenne (Arrêt Schrems II) rend ces transferts de données techniquement illégaux pour les écoles."
+                        </p>
+                    </div>
+                    <div class="md:w-1/2 bg-black/30 rounded p-4 font-mono text-[10px] text-green-500 border border-white/10">
+                        <p class="text-gray-500 border-b border-gray-700 pb-1 mb-2">JOURNAL SYSTÈME (SIMULATION)</p>
+                        <p>> connecting to vortex.data.microsoft.com... <span class="text-danger">CONNECTED</span></p>
+                        <p>> uploading diag_track_log... [24kb] ... OK</p>
+                        <p>> uploading app_usage_stats... [12kb] ... OK</p>
+                        <p>> syncing advertising_id... <span class="text-neon-glow">[BLOCKED BY NIRD]</span></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+       
+
+       
+        <script>
+             const cursor = document.getElementById('custom-cursor');
+document.addEventListener('mousemove', (e) => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top = e.clientY + 'px';
+});
+
+// Agrandir le curseur sur les liens et boutons
+document.querySelectorAll('a, button, .pro-card').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+});</script>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800, // Durée de l'animation
+    once: true,    // L'animation ne se joue qu'une fois
+    offset: 100    // Déclenchement un peu avant
+  });
+  
+    </script>
+
+    </main>
+      <footer class="border-t border-white/5 bg-black/40 py-12 mt-12 backdrop-blur-lg relative z-20">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-gray-600 text-sm uppercase tracking-widest">La Nuit de l'Info 2025 ISTY - Team NIRD</p>
+        </div>
+    </footer>
+</body>
+</html>
